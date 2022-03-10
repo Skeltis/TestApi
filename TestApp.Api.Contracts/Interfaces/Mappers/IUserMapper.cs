@@ -5,7 +5,6 @@ namespace TestApp.Api.Contracts.Interfaces.Mappers;
 
 public interface IUserMapper
 {
-    UserDto Map(CreateUserWithCompanyRequest request);
     UserDto Map(CreateUserUnderCompanyRequest request);
     UserModel Map(UserDto user);
 }

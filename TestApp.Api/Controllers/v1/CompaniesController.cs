@@ -23,10 +23,10 @@ public class CompaniesController : Controller
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(UserModel), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(CompanyModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-    public async Task<ActionResult<UserModel>> GetAsync([FromQuery][Required] Guid companyId, CancellationToken cancellationToken)
+    public async Task<ActionResult<CompanyModel>> GetAsync([FromQuery][Required] Guid companyId, CancellationToken cancellationToken)
     {
         try
         {
@@ -40,13 +40,15 @@ public class CompaniesController : Controller
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(UserModel), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(CompanyModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-    public async Task<ActionResult<UserModel>> CreateAsync([Required] CreateCompanyRequest createCompanyRequest,
+    public async Task<ActionResult<CompanyModel>> CreateAsync([Required] CreateCompanyRequest createCompanyRequest,
         CancellationToken cancellationToken)
     {
-        var companyToAdd = _companyMapper.Map(createCompanyRequest);
-        var addedCompany = await _companiesService.AddCompanyAsync(companyToAdd, cancellationToken);
+        (var companyToAdd, var userToAdd) = _companyMapper.Map(createCompanyRequest);
+        var addedCompany = (userToAdd != null)
+            ? await _companiesService.AddCompanyWithUserAsync(companyToAdd, userToAdd, cancellationToken)
+            : await _companiesService.AddCompanyAsync(companyToAdd, cancellationToken);
         return Ok(_companyMapper.Map(addedCompany));
     }
 }

@@ -74,7 +74,6 @@ namespace TestApp.Api
             app.UseSwaggerUI(
                 options =>
                 {
-                    options.OAuthConfigObject.ClientId = "native";
                     options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
 
                     foreach (var description in provider.ApiVersionDescriptions)

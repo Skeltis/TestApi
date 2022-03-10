@@ -4,7 +4,6 @@ using TestApp.BLL.Contracts.Exceptions;
 using TestApp.BLL.Contracts.Interfaces;
 using TestApp.BLL.Contracts.Mappers;
 using TestApp.Data.Contracts.Interfaces;
-using TestApp.Data.Contracts.Models;
 
 namespace TestApp.BLL.Services;
 
@@ -33,23 +32,6 @@ public class UsersService : BaseService<UsersService>, IUsersService
             }
 
             return _userMapper.Map(user);
-        }
-    }
-
-    public async Task<UserDto> AddUserWithCompanyAsync(UserDto user, CancellationToken cancellationToken)
-    {
-        using var uow = _unitOfWorkFactory.Create();
-        {
-            var userCompany = await uow.CompaniesStorage.AddAsync(new Company
-            {
-                CompanyName = user.Company.CompanyName
-            },
-            cancellationToken);
-
-            var newUser = _userMapper.Map(user, userCompany);
-            var createdUser = await uow.UsersStorage.CreateAsync(newUser, cancellationToken);
-            await uow.SaveChangesAsync();
-            return _userMapper.Map(createdUser);
         }
     }
 

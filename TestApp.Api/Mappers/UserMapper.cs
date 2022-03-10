@@ -6,20 +6,6 @@ namespace TestApp.Api.Mappers;
 
 public class UserMapper : IUserMapper
 {
-    public UserDto Map(CreateUserWithCompanyRequest request)
-    {
-        return new UserDto
-        {
-            Email = request.Email,
-            Name = request.Name,
-            PasswordHash = request.PasswordHash,
-            Company = new CompanyDto
-            {
-                CompanyName = request.CompanyName
-            }
-        };
-    }
-
     public UserDto Map(CreateUserUnderCompanyRequest request)
     {
         return new UserDto
