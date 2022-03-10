@@ -31,6 +31,7 @@ public class MainDbContext : DbContext
             .HasKey(p => p.Id);
         entityTypeBuilder.Property(p => p.Id)
             .ValueGeneratedOnAdd();
+        entityTypeBuilder.HasIndex(p => p.Email).IsUnique();
         entityTypeBuilder.HasOne(p => p.Company)
             .WithMany(x => x.Users)
             .HasForeignKey(p => p.CompanyId)
@@ -41,12 +42,11 @@ public class MainDbContext : DbContext
     {
         var entityTypeBuilder
             = modelBuilder.Entity<Company>();
-
         entityTypeBuilder
             .ToTable("Companies", "public")
             .HasKey(p => p.Id);
+        entityTypeBuilder.HasIndex(p => p.CompanyName).IsUnique();
         entityTypeBuilder.Property(p => p.Id).ValueGeneratedOnAdd();
-        entityTypeBuilder.Property(p => p.CompanyName).HasColumnName("CompanyName");
     }
 }
 

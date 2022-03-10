@@ -5,6 +5,5 @@ namespace TestApp.BLL.Contracts.Mappers;
 
 public interface IUserMapper
 {
-    UserDto Map(User user);
     User Map(UserDto user, Company userCompany);
 }

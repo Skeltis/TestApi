@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using TestApp.BLL.Contracts.Dtos;
 using TestApp.BLL.Contracts.Exceptions;
 using TestApp.BLL.Contracts.Interfaces;
@@ -23,45 +25,68 @@ public class CompaniesService : BaseService<CompaniesService>, ICompaniesService
         _userMapper = userMapper ?? throw new ArgumentNullException(nameof(userMapper));
     }
 
-    public async Task<CompanyDto> GetCompanyAsync(Guid companyId, CancellationToken cancellationToken)
-    {
-        using var uow = _unitOfWorkFactory.Create();
-        {
-            var company = await uow.CompaniesStorage.GetAsync(companyId, cancellationToken);
-            if (company == null)
-            {
-                Logger.LogError($"Company with id={companyId} doesn't exist");
-                throw new NotFoundException($"Company with id={companyId} doesn't exist");
-            }
-            return _companyMapper.Map(company);
-        }
-    }
-
-    public async Task<CompanyDto> AddCompanyAsync(CompanyDto company, CancellationToken cancellationToken)
+    public virtual async Task<CompanyDto> AddCompanyAsync(CompanyDto company, CancellationToken cancellationToken)
     {
         using var uow = _unitOfWorkFactory.Create();
         {
             var companyEntity = _companyMapper.Map(company);
+            var existingEntity = await uow.CompaniesStorage.GetAsync(company.CompanyName, cancellationToken);
+            if (existingEntity != null)
+            {
+                Logger.LogError($"Company with name={company.CompanyName} already exists");
+                throw new AlreadyExistsException($"Company with name={company.CompanyName} already exists");
+            }
+
             var addedCompany = await uow.CompaniesStorage.AddAsync(companyEntity, cancellationToken);
-            await uow.SaveChangesAsync();
+            try
+            {
+                await uow.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                Logger.LogError($"Company with name={company.CompanyName} already exists");
+                throw new AlreadyExistsException($"Company with name={company.CompanyName} already exists", ex);
+            }
             return _companyMapper.Map(addedCompany);
         }
     }
 
-    public async Task<CompanyDto> AddCompanyWithUserAsync(CompanyDto company, UserDto user, CancellationToken cancellationToken)
+    public virtual async Task<CompanyDto> AddCompanyWithUserAsync(CompanyDto company, UserDto user, CancellationToken cancellationToken)
     {
         using var uow = _unitOfWorkFactory.Create();
         {
-            var userCompany = await uow.CompaniesStorage.AddAsync(new Company
+            var existingCompany = await uow.CompaniesStorage.GetAsync(company.CompanyName, cancellationToken);
+            if (existingCompany != null)
             {
-                CompanyName = company.CompanyName
-            },
-            cancellationToken);
+                var message = $"Company with name={existingCompany.CompanyName} already exists";
+                Logger.LogError(message);
+                throw new AlreadyExistsException(message);
+            }
+            var existingUser = await uow.UsersStorage.GetAsync(user.Email, cancellationToken);
+            if (existingUser != null)
+            {
+                var message = existingUser.CompanyId == company.Id
+                    ? $"User with email={user.Email} already exists under current company {company.Id}"
+                    : $"User with email={ user.Email } already exists under different company {existingUser.CompanyId}";
+                Logger.LogError(message);
+                throw new AlreadyExistsException(message);
+            }
 
-            var newUser = _userMapper.Map(user, userCompany);
+            var addedCompany = await uow.CompaniesStorage.AddAsync(new Company { CompanyName = company.CompanyName },
+                cancellationToken);
+
+            var newUser = _userMapper.Map(user, addedCompany);
             await uow.UsersStorage.CreateAsync(newUser, cancellationToken);
-            await uow.SaveChangesAsync();
-            return _companyMapper.Map(userCompany);
+            try
+            {
+                await uow.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                Logger.LogError($"Company with name={company.CompanyName} already exists");
+                throw new AlreadyExistsException($"Company with name={company.CompanyName} already exists", ex);
+            }
+            return _companyMapper.Map(addedCompany);
         }
     }
 }

@@ -18,9 +18,9 @@ public class UsersStorage : IUsersStorage
         return _dbContext.Set<User>().Include(e => e.Company).FirstOrDefaultAsync(e => e.Id == userId, cancellationToken);
     }
 
-    public Task<User[]> GetUsersAsync(int take, int skip, CancellationToken cancellationToken)
+    public Task<User?> GetAsync(string email, CancellationToken cancellationToken)
     {
-        return _dbContext.Set<User>().Include(e => e.Company).Skip(skip).Take(take).ToArrayAsync(cancellationToken);
+        return _dbContext.Set<User>().Include(e => e.Company).FirstOrDefaultAsync(e => e.Email == email, cancellationToken);
     }
 
     public async Task<User> CreateAsync(User user, CancellationToken cancellationToken)
@@ -29,24 +29,5 @@ public class UsersStorage : IUsersStorage
         await _dbContext.Entry(user).Reference(x => x.Company).LoadAsync(cancellationToken);
         return user;
     }
-
-    public async Task<User> UpdateAsync(User user, CancellationToken cancellationToken)
-    {
-        _dbContext.Set<User>().Update(user);
-        await _dbContext.Entry(user).Reference(x => x.Company).LoadAsync(cancellationToken);
-        return user;
-    }
-
-    public async Task DeleteByUserIdAsync(Guid userId, CancellationToken cancellationToken)
-    {
-        var users = await _dbContext.Set<User>().Where(e => e.Id == userId).ToListAsync(cancellationToken);
-        if (users.Any())
-        {
-            _dbContext.Set<User>().RemoveRange(users);
-        }
-    }
-
-
-
 }
 
