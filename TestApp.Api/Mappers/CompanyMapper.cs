@@ -6,12 +6,25 @@ namespace TestApp.Api.Mappers;
 
 public class CompanyMapper : ICompanyMapper
 {
-    public CompanyDto Map(CreateCompanyRequest request)
+    public (CompanyDto company, UserDto user) Map(CreateCompanyRequest request)
     {
-        return new CompanyDto
+        UserDto user = null;
+        var company = new CompanyDto
         {
             CompanyName = request.CompanyName
         };
+
+        if (request.User != null)
+        {
+            user = new UserDto
+            {
+                Email = request.User.Email,
+                Name = request.User.Name,
+                PasswordHash = request.User.PasswordHash
+            };
+        }
+
+        return (company, user);
     }
 
     public CompanyModel Map(CompanyDto user)

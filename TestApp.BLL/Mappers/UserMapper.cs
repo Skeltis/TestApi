@@ -31,7 +31,6 @@ public class UserMapper : IUserMapper
             PasswordHash = user.PasswordHash,
             CompanyId = userCompany.Id,
             Company = userCompany
-
         };
     }
 }

@@ -39,22 +39,13 @@ public class UsersController : Controller
         }
     }
 
-    [HttpPost]
-    [ProducesResponseType(typeof(UserModel), (int)HttpStatusCode.OK)]
-    [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-    public async Task<ActionResult<UserModel>> CreateAsync([Required] CreateUserWithCompanyRequest createUserRequest,
-        CancellationToken cancellationToken)
-    {
-        var userToAdd = _userMapper.Map(createUserRequest);
-        var addedUser = await _usersService.AddUserWithCompanyAsync(userToAdd, cancellationToken);
-        return Ok(_userMapper.Map(addedUser));
-    }
 
-    [HttpPut]
+
+    [HttpPost]
     [ProducesResponseType(typeof(UserModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-    public async Task<ActionResult<UserModel>> PutAsync([Required] CreateUserUnderCompanyRequest createUserRequest,
+    public async Task<ActionResult<UserModel>> CreateAsync([Required] CreateUserUnderCompanyRequest createUserRequest,
     CancellationToken cancellationToken)
     {
         try

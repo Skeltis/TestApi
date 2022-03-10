@@ -4,6 +4,7 @@ using TestApp.BLL.Contracts.Exceptions;
 using TestApp.BLL.Contracts.Interfaces;
 using TestApp.BLL.Contracts.Mappers;
 using TestApp.Data.Contracts.Interfaces;
+using TestApp.Data.Contracts.Models;
 
 namespace TestApp.BLL.Services;
 
@@ -11,13 +12,15 @@ public class CompaniesService : BaseService<CompaniesService>, ICompaniesService
 {
     private readonly IUnitOfWorkFactory _unitOfWorkFactory;
     private readonly ICompanyMapper _companyMapper;
+    private readonly IUserMapper _userMapper;
 
     public CompaniesService(IUnitOfWorkFactory unitOfWorkFactory, ICompanyMapper companyMapper,
-        ILogger<CompaniesService> logger)
+        IUserMapper userMapper, ILogger<CompaniesService> logger)
         : base(logger)
     {
         _unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
         _companyMapper = companyMapper ?? throw new ArgumentNullException(nameof(companyMapper));
+        _userMapper = userMapper ?? throw new ArgumentNullException(nameof(userMapper));
     }
 
     public async Task<CompanyDto> GetCompanyAsync(Guid companyId, CancellationToken cancellationToken)
@@ -42,6 +45,23 @@ public class CompaniesService : BaseService<CompaniesService>, ICompaniesService
             var addedCompany = await uow.CompaniesStorage.AddAsync(companyEntity, cancellationToken);
             await uow.SaveChangesAsync();
             return _companyMapper.Map(addedCompany);
+        }
+    }
+
+    public async Task<CompanyDto> AddCompanyWithUserAsync(CompanyDto company, UserDto user, CancellationToken cancellationToken)
+    {
+        using var uow = _unitOfWorkFactory.Create();
+        {
+            var userCompany = await uow.CompaniesStorage.AddAsync(new Company
+            {
+                CompanyName = company.CompanyName
+            },
+            cancellationToken);
+
+            var newUser = _userMapper.Map(user, userCompany);
+            await uow.UsersStorage.CreateAsync(newUser, cancellationToken);
+            await uow.SaveChangesAsync();
+            return _companyMapper.Map(userCompany);
         }
     }
 }

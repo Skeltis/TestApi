@@ -6,5 +6,6 @@ namespace TestApp.Api.Contracts.v1.Model
     {
         [Required]
         public string CompanyName { get; set; }
+        public CreateUserRequest? User { get; set; }
     }
 }
