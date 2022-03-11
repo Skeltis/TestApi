@@ -6,7 +6,7 @@ namespace TestApp.Api.Mappers;
 
 public class CompanyMapper : ICompanyMapper
 {
-    public (CompanyDto company, UserDto user) Map(CreateCompanyRequest request)
+    public (CompanyDto company, UserDto? user) Map(CreateCompanyRequest request)
     {
         UserDto user = null;
         var company = new CompanyDto

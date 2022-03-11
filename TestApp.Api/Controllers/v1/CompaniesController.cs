@@ -22,34 +22,25 @@ public class CompaniesController : Controller
         _companyMapper = companyMapper ?? throw new ArgumentNullException(nameof(companyMapper));
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(CompanyModel), (int)HttpStatusCode.OK)]
-    [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
-    [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-    public async Task<ActionResult<CompanyModel>> GetAsync([FromQuery][Required] Guid companyId, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var company = await _companiesService.GetCompanyAsync(companyId, cancellationToken);
-            return Ok(_companyMapper.Map(company));
-        }
-        catch (NotFoundException exception)
-        {
-            return NotFound(exception.Message);
-        }
-    }
-
     [HttpPost]
     [ProducesResponseType(typeof(CompanyModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Conflict)]
     public async Task<ActionResult<CompanyModel>> CreateAsync([Required] CreateCompanyRequest createCompanyRequest,
         CancellationToken cancellationToken)
     {
         (var companyToAdd, var userToAdd) = _companyMapper.Map(createCompanyRequest);
-        var addedCompany = (userToAdd != null)
-            ? await _companiesService.AddCompanyWithUserAsync(companyToAdd, userToAdd, cancellationToken)
-            : await _companiesService.AddCompanyAsync(companyToAdd, cancellationToken);
-        return Ok(_companyMapper.Map(addedCompany));
+        try
+        {
+            var addedCompany = (userToAdd != null)
+                ? await _companiesService.AddCompanyWithUserAsync(companyToAdd, userToAdd, cancellationToken)
+                : await _companiesService.AddCompanyAsync(companyToAdd, cancellationToken);
+            return Ok(_companyMapper.Map(addedCompany));
+        }
+        catch (AlreadyExistsException exception)
+        {
+            return Conflict(exception.Message);
+        }
     }
 }
 

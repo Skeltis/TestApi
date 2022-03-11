@@ -8,7 +8,6 @@ public static class ApiDependencyInjection
 {
     public static IServiceCollection AddApi(this IServiceCollection services)
     {
-        services.AddSingleton<IUserMapper, UserMapper>();
         services.AddSingleton<ICompanyMapper, CompanyMapper>();
 
         return services;

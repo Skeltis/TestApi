@@ -41,12 +41,11 @@ public class MainDbContext : DbContext
     {
         var entityTypeBuilder
             = modelBuilder.Entity<Company>();
-
         entityTypeBuilder
             .ToTable("Companies", "public")
             .HasKey(p => p.Id);
+        entityTypeBuilder.HasIndex(p => p.CompanyName).IsUnique();
         entityTypeBuilder.Property(p => p.Id).ValueGeneratedOnAdd();
-        entityTypeBuilder.Property(p => p.CompanyName).HasColumnName("CompanyName");
     }
 }
 

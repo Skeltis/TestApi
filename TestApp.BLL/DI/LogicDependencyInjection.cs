@@ -11,8 +11,6 @@ public static class LogicDependencyInjection
     public static IServiceCollection AddLogic(this IServiceCollection services)
     {
         services.AddSingleton<ICompaniesService, CompaniesService>();
-        services.AddSingleton<IUsersService, UsersService>();
-
         services.AddSingleton<ICompanyMapper, CompanyMapper>();
         services.AddSingleton<IUserMapper, UserMapper>();
 
