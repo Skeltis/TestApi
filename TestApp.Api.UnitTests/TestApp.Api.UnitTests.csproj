@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TestApp.Api\TestApp.Api.csproj" />
-    <ProjectReference Include="..\TestApp.BLL.UnitTests\TestApp.BLL.UnitTests.csproj" />
   </ItemGroup>
 
 </Project>

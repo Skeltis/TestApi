@@ -14,9 +14,9 @@ namespace TestApp.BLL.UnitTests.Services;
 
 public class DbServiceTestFixture
 {
-    private CompaniesService _companiesService;
+    private readonly CompaniesService _companiesService;
 
-    private UnitOfWorkFactory _unitOfWorkFactory;
+    private readonly UnitOfWorkFactory _unitOfWorkFactory;
 
     public DbServiceTestFixture()
     {
@@ -30,21 +30,6 @@ public class DbServiceTestFixture
         _unitOfWorkFactory = new(mockDbFactory.Object);
         _companiesService = new CompaniesService(_unitOfWorkFactory, 
             new CompanyMapper(), new UserMapper(), 
-            NullLogger<CompaniesService>.Instance);
-    }
-
-    public Mock<CompaniesService> CreateCompaniesServiceMock()
-    {
-        var mockDbFactory = new Mock<IDbContextFactory<MainDbContext>>();
-        var dbContextOptionsBuilder = new DbContextOptionsBuilder<MainDbContext>()
-                    .UseInMemoryDatabase(Guid.NewGuid().ToString());
-        mockDbFactory.Setup(f => f.CreateDbContext())
-            .Returns(() => new MainDbContext(dbContextOptionsBuilder
-            .Options));
-
-        _unitOfWorkFactory = new(mockDbFactory.Object);
-        return new Mock<CompaniesService>(_unitOfWorkFactory, 
-            new CompanyMapper(), new UserMapper(),
             NullLogger<CompaniesService>.Instance);
     }
 

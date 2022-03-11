@@ -65,9 +65,6 @@ namespace TestApp.Data.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.ToTable("Users", "public");
                 });
 

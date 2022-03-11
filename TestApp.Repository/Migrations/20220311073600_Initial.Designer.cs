@@ -12,7 +12,7 @@ using TestApp.Data;
 namespace TestApp.Data.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20220310170858_Initial")]
+    [Migration("20220311073600_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,9 +66,6 @@ namespace TestApp.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.ToTable("Users", "public");
                 });

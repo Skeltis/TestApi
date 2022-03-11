@@ -22,8 +22,7 @@ public class CompanyMapper : ICompanyMapper
                     Id = x.Id,
                     Email = x.Email,
                     Name = x.Name,
-                    PasswordHash = x.PasswordHash,
-                    Company = companyDto
+                    PasswordHash = x.PasswordHash
                 })
                 .ToArray();
 

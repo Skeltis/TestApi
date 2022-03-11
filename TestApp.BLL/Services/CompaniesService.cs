@@ -33,8 +33,9 @@ public class CompaniesService : BaseService<CompaniesService>, ICompaniesService
             var existingEntity = await uow.CompaniesStorage.GetAsync(company.CompanyName, cancellationToken);
             if (existingEntity != null)
             {
-                Logger.LogError($"Company with name={company.CompanyName} already exists");
-                throw new AlreadyExistsException($"Company with name={company.CompanyName} already exists");
+                var message = $"Company with name={company.CompanyName} already exists";
+                Logger.LogError(message);
+                throw new AlreadyExistsException(message);
             }
 
             var addedCompany = await uow.CompaniesStorage.AddAsync(companyEntity, cancellationToken);
@@ -44,8 +45,9 @@ public class CompaniesService : BaseService<CompaniesService>, ICompaniesService
             }
             catch (DbUpdateException ex)
             {
-                Logger.LogError($"Company with name={company.CompanyName} already exists");
-                throw new AlreadyExistsException($"Company with name={company.CompanyName} already exists", ex);
+                var message = $"Company with name={company.CompanyName} already exists";
+                Logger.LogError(message, ex);
+                throw new AlreadyExistsException(message, ex);
             }
             return _companyMapper.Map(addedCompany);
         }
@@ -62,15 +64,6 @@ public class CompaniesService : BaseService<CompaniesService>, ICompaniesService
                 Logger.LogError(message);
                 throw new AlreadyExistsException(message);
             }
-            var existingUser = await uow.UsersStorage.GetAsync(user.Email, cancellationToken);
-            if (existingUser != null)
-            {
-                var message = existingUser.CompanyId == company.Id
-                    ? $"User with email={user.Email} already exists under current company {company.Id}"
-                    : $"User with email={ user.Email } already exists under different company {existingUser.CompanyId}";
-                Logger.LogError(message);
-                throw new AlreadyExistsException(message);
-            }
 
             var addedCompany = await uow.CompaniesStorage.AddAsync(new Company { CompanyName = company.CompanyName },
                 cancellationToken);
@@ -83,8 +76,9 @@ public class CompaniesService : BaseService<CompaniesService>, ICompaniesService
             }
             catch (DbUpdateException ex)
             {
-                Logger.LogError($"Company with name={company.CompanyName} already exists");
-                throw new AlreadyExistsException($"Company with name={company.CompanyName} already exists", ex);
+                var message = $"Company with name={company.CompanyName} already exists";
+                Logger.LogError(message, ex);
+                throw new AlreadyExistsException(message, ex);
             }
             return _companyMapper.Map(addedCompany);
         }

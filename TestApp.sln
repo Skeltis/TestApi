@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp.Api.UnitTests", "Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp.BLL.UnitTests", "TestApp.BLL.UnitTests\TestApp.BLL.UnitTests.csproj", "{E6398D4F-D16E-4785-B02D-3C5768F769DC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{57590D22-F07B-4696-AD71-B8394EEB8C5C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1698CBDE-9E3C-413E-84BC-C0E50DF89510} = {57590D22-F07B-4696-AD71-B8394EEB8C5C}
+		{E6398D4F-D16E-4785-B02D-3C5768F769DC} = {57590D22-F07B-4696-AD71-B8394EEB8C5C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5274E15-B1A6-4AB8-90B2-A090C2424354}

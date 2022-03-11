@@ -60,13 +60,6 @@ namespace TestApp.Data.Migrations
                 schema: "public",
                 table: "Users",
                 column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Email",
-                schema: "public",
-                table: "Users",
-                column: "Email",
-                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

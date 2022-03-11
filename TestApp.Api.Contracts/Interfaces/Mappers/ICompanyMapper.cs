@@ -6,5 +6,5 @@ namespace TestApp.Api.Contracts.Interfaces.Mappers;
 public interface ICompanyMapper
 {
     CompanyModel Map(CompanyDto user);
-    (CompanyDto company, UserDto user) Map(CreateCompanyRequest request);
+    (CompanyDto company, UserDto? user) Map(CreateCompanyRequest request);
 }

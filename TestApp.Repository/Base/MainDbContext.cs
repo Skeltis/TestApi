@@ -31,7 +31,6 @@ public class MainDbContext : DbContext
             .HasKey(p => p.Id);
         entityTypeBuilder.Property(p => p.Id)
             .ValueGeneratedOnAdd();
-        entityTypeBuilder.HasIndex(p => p.Email).IsUnique();
         entityTypeBuilder.HasOne(p => p.Company)
             .WithMany(x => x.Users)
             .HasForeignKey(p => p.CompanyId)
